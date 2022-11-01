@@ -1,2 +1,2 @@
 # sean-roelofsen.github.io
-Sean Roelofsen's Portfolio
+Sean Roelofsen's Portfolio*
