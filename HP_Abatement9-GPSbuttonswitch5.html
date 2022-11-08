@@ -1,0 +1,2174 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset=utf-8 />
+<title>Halton-Peel Environmental Officer WebMap Tool</title>
+
+<meta name="viewport" content='width=device-width, initial-scale=1, maximum-scale=1,user-scalable=no'/>
+
+
+	<!--Link to Leaflet CSS document
+<meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  -->
+
+	<!--linking to Leaflet API, Geosearch, FontAwesome-->
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+	<link rel="stylesheet" href="https://unpkg.com/leaflet-geosearch@3.1.0/dist/geosearch.css"/>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+	<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+	<script src="https://unpkg.com/leaflet-geosearch@3.1.0/dist/bundle.min.js"></script>
+
+	<!--linking to jQuery and jQuery UI libraries and jQuery UI CSS stylesheet -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://raw.githubusercontent.com/stefanocudini/leaflet-gps/master/src/leaflet-gps.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://raw.githubusercontent.com/stefanocudini/leaflet-gps/master/src/leaflet-gps.js"></script>
+
+  <!--<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">-->
+
+<script type="text/css"></script>
+<!--<div id="map" class="map">  </div>-->
+
+<style>
+
+
+/* These rules are applied to the layer toggle in top right corner, a cleaner look than the default toggle */
+.leaflet-control-layers-toggle {
+  background-image: url(https://i.stack.imgur.com/3keSg.png) !important;
+	background-color: #2da0e2;
+  background-size: 30px 30px;
+		}
+
+	.leaflet-touch .leaflet-control-layers-toggle {
+	background-image: url(https://i.stack.imgur.com/3keSg.png) !important;
+	background-color: #2da0e2;
+	}
+
+.leaflet-control-layers-expanded {
+  color: white;
+	background-color: #2da0e2;
+	}
+
+.leaflet-control-layers-expanded {
+  text-decoration: uncheck ALL;
+}
+
+	
+
+/* set style parameters to account for Information box(list) and map (fills entire screen), with separate properties, also allows LayerControl box to not inherit the same parameters as the info box -this was the section giving me a ton of issues, with the LayerControl box opening the same size as the info box... fixed now! */
+#map {
+    position: absolute;
+    top: 0%;
+    bottom: 0%;
+    width: 100%;
+    scroll-behavior: zoom;
+}
+
+#toggle-button {
+    position: absolute;
+    top: 2%;
+    left:  5%;
+    /*bottom: 0%;
+    width: 100%;
+    width: 20px;*/
+    /*visibility: hidden;*/
+    height: 15px;
+    border: 1px solid rgb(33,13, 40);
+    
+    border-radius: 1px;
+    z-index: 1800;
+    font-family: Tahoma;
+    font-size: 8pt;
+    background: #bebebe;
+    cursor: pointer;
+    scroll-behavior: auto;
+
+}
+#toggle-button-off {
+    position: absolute;
+    top: 2%;
+    left:  1300px;
+    /*bottom: 0%;
+    width: 100%;
+    width: 20px;*/
+    /*visibility: hidden;*/
+    height: 15px;
+    border: 1px solid rgb(33,13, 40);
+    
+    border-radius: 1px;
+    z-index: 18000;
+    font-family: Tahoma;
+    font-size: 8pt;
+    background: #bebebe;
+    cursor: pointer;
+    scroll-behavior: auto;
+
+}
+
+#buttonOff {
+    position: fixed;
+    top: 29%;
+    left:  1%;
+    /*bottom: 0%;
+    width: 100%;
+    width: 20px;*/
+    /*visibility: hidden;*/
+    height: 30px;
+    border: 1px solid rgb(33,13, 40);
+    
+    border-radius: 1px;
+    z-index: 1800;
+    font-family: Tahoma;
+    font-size: 8pt;
+    background: #bebebe;
+    cursor: pointer;
+    scroll-behavior: auto;
+}
+
+#buttonOn {
+    position: fixed;
+    top: 24%;
+    left:  1%;
+    /*bottom: 0%;
+    width: 100%;
+    width: 20px;*/
+    /*visibility: hidden;*/
+    height: 30px;
+    border: 1px solid rgb(33,13, 40);
+    
+    border-radius: 1px;
+    z-index: 1800;
+    font-family: Tahoma;
+    font-size: 8pt;
+    background: #bebebe;
+    cursor: pointer;
+    scroll-behavior: auto;
+}
+
+.target { 
+     
+    clear:both;
+    position: fixed;
+    left: 5%;
+    top: 50px;
+    width: 320px;
+    /*visibility: hidden;*/
+    height: 595px;
+    opacity: 0.9;
+    margin: 5px auto;
+    padding: 0 15px;
+    background: #d3d3d3;
+    border: 2px solid rgb(33,13, 40);
+    border-radius: 3px;
+    z-index: 180;
+    font-family: Tahoma;
+    font-size: 12pt;
+    display: show;
+    text-decoration-color: #000000;
+    scroll-behavior: auto;
+
+}
+
+.circle-with-txt {
+    position: absolute;
+    
+    font-size: 12px;
+    opacity: 0.7;
+    font-weight: bold;
+    color: black;*/
+    width: 25px;
+    height: 25px;
+  }
+  .txt {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    font-size: 12px;
+  }
+   
+  .circle-with-txt2 {
+    position: absolute;
+    
+    font-size: 11px;
+    opacity: 0.9;
+    font-weight: bold;
+    color: black;*/
+    width: 5px;
+    height: 5px;
+  }
+  .txt2 {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    font-size: 12px;
+  }
+    
+
+    .hidden {
+    display: none;
+}
+
+.leaflet-control-basemapsSwitcher{
+    height: auto;
+    width: auto;
+    display:flex;
+}
+
+.leaflet-control-basemapsSwitcher:hover{
+    cursor: pointer;
+}
+
+.basemapImg{
+    box-shadow: 2px 2px 5px rgb(0 0 0 / 65%);
+    background-color: #fff;
+    margin:5px;
+    padding:5px;
+    border-radius: 3px 3px;
+}
+
+.basemapImg div{
+    background-size: 55px 55px;
+    width: 55px;
+    height: 55px;
+    border-radius: 3px 3px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.basemapImg div .name{
+    width:100%;
+    height:auto;
+    background-color: rgba(255, 255, 255, 0.6);
+    border-radius: 0;
+    color:black;
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+    padding:1px;
+}
+
+.basemapImg div .check{
+    width:auto;
+    height:auto;
+    border-radius: 0;
+    display: flex;
+    align-items: flex-end;
+    font-weight: 500;
+    padding:1px;
+    content:''
+}
+
+.activeMap::before{
+    color:white;
+    content: '✔';
+    width: 18px;
+    height: 18px;
+    background-color: #387B23;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+/*#header {
+    float: right;
+    position: absolute;
+    display: show;
+    height: 450px;
+    width: 200px;
+
+
+    @media screen and (max-width: 768px) {
+  .target{
+    visibility: hidden;
+    clear: both;
+    float: left;
+    margin: 10px auto 5px 20px;
+    width: 28%;
+    display: none;
+}
+
+}*/
+
+.leaflet-container .leaflet-control-gps {
+    position:relative;
+    float:left;
+    background:#fff;
+    color:#1978cf;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+    /*background-color: rgba(0, 0, 0, 0.25);*/
+    background-color: rgba(255, 255, 255, 0.8);
+    z-index:1000;   
+    /*box-shadow: 0 1px 7px rgba(0,0,0,0.65);*/
+    border: 2px solid rgba(0,0,0,0.2);
+    background-clip: padding-box;
+    margin-left:10px;
+    margin-top:10px;
+}
+.leaflet-control-gps .gps-button {
+    display:block;
+    float:left;
+    width:22px;
+    height:22px;
+    background-image: url('https://raw.githubusercontent.com/stefanocudini/leaflet-gps/master/images/gps-icon.svg');
+    background-repeat: no-repeat;
+    background-position: 1px 1px;
+    background-color: #fff;
+    border-radius:4px;
+    padding: 2px;
+    margin: 2px;
+}
+.leaflet-control-gps .gps-button:hover,
+.leaflet-control-gps .gps-button.active:hover {
+    background-color: #f4f4f4;
+}
+.leaflet-control-gps .gps-button.loading,
+.leaflet-control-gps .gps-button.loading:hover {
+    background-position: 1px -28px;
+}
+.leaflet-control-gps .gps-button.active {
+    background-position: 1px -52px;
+}
+.leaflet-control-gps .gps-button.disabled {
+    background-position: 1px -24px;
+}
+
+.leaflet-control-gps .gps-alert {
+    position:absolute;
+    left:34px;
+    bottom:-1px;
+    width:220px;
+    padding:2px;
+    line-height:1em;
+    color:#e00;
+    border: 2px solid rgba(0,0,0,0.2);
+    background-color: rgba(255, 255, 255, 0.75);
+    border-radius:4px;
+}
+
+
+
+p {
+    font-size: .9em;
+    line-height: 1.5em;
+  }
+
+
+
+@media screen and (max-width: 768px) {
+  .target {
+    visibility: hidden;
+    clear: both;
+    top: 70px;
+    width: 100px;
+    /*visibility: hidden;
+    width: 28%;*/
+    height: 100px;
+    float: left;
+    margin: 10px auto 5px 20px;
+    
+    display: none;
+}
+
+
+/*#buttonOn {
+    visibility: visible;
+    position: absolute;
+    left: 1%;
+    top: 100px;
+    display: block !important;
+    max-height: none !important;
+    overflow: visible !important;
+
+
+}
+   
+#buttonOff {
+    visibility: visible;
+    position: absolute;
+    left: 1%;
+    top: 120px;
+    display: block !important;
+    max-height: none !important;
+    overflow: visible !important;
+
+
+
+}*/
+
+ #toggle-button {
+    visibility: hidden;
+    clear: both;
+    float: left;
+    margin: 10px auto 5px 20px;
+    width: 28%;
+    display: none;
+  }
+      }
+
+
+
+
+
+body {
+    margin: 0;
+    padding: 0;
+  }
+	
+</style>
+</head>
+
+
+<body>
+
+<div id="map"></div>
+
+<button id ="buttonOff">Erase<br>-ALL-</button>
+<button id ="buttonOn">-Add-<br>ALL</button>
+        
+<div id="toggle-button"> &nbspShow/Hide Map Details&nbsp </button>
+
+
+
+
+<head>
+  
+  <title></title>
+</head>
+<body>
+
+</body>
+
+
+
+<div class="target">
+
+
+
+<p><b><u>Halton-Peel Environmental Officers </u></b><a href="https://www.ontario.ca/page/ministry-environment-conservation-parks" target="_blank"><img src="https://raw.githubusercontent.com/sean-roelofsen/OwenSoundWW/main/ONLOGO.png" alt="MECP" width="60" height="20"></a></p>
+
+<p><a href="https://raw.githubusercontent.com/sean-roelofsen/HP-Abatement/main/AbatementList.png" target="_blank"><img src="https://raw.githubusercontent.com/sean-roelofsen/HP-Abatement/main/AbatementList.png" alt="Halton-Peel Officer List" width="325" height="350"></a></p>
+
+<center><p><a href="https://raw.githubusercontent.com/sean-roelofsen/YDHPTO-Region-Geojsons/main/FlexTeamEO2.png" target="_blank"><img src="https://raw.githubusercontent.com/sean-roelofsen/YDHPTO-Region-Geojsons/main/FlexTeamEO2.png" alt="Flex Team Assignments" width="325" height="165"></a></p></center>
+
+<!--<p>Other Resources:</p>
+
+<p><a href="https://www.lioapplications.lrc.gov.on.ca/SourceWaterProtection/index.html?viewer=SourceWaterProtection.SWPViewer&locale=en-CA" target="_blank">Source Protection Information Atlas</a></p>
+<p><a href="https://conservationontario.ca/conservation-authorities/find-a-conservation-authority" target="_blank">Conservation ON *Find Your CA*</a></p>-->
+
+
+
+<!--<p><a href="https://github.com/sean-roelofsen/Central_Region_ECAs/find/main" target="_blank">Central Region ECAs (link)</a></p>
+<p><a href="https://www.conservationhalton.ca/" target="_blank">Conservation Halton</a></p>
+<p><a href="https://trca.ca/" target="_blank">Toronto & Region CA</a></p>
+<p><a href="https://cvc.ca/" target="_blank">Credit Valley CA</a></p>
+<p><a href="https://www.cloca.com/" target="_blank">Central Lake Ontario CA</a></p>
+<p><a href="https://www.kawarthaconservation.com/en/index.aspx" target="_blank">Kawartha Conservation</a></p>
+<p><a href="https://www.lsrca.on.ca/" target="_blank">Lake Simcoe Region CA</a></p>
+<p><a href="https://grca.on.ca/" target="_blank">Ganaraska Region CA</a></p>-->
+
+</div>
+</html>
+
+
+<!--
+    <p><u><b>Interview Slides:</u></b></p>
+<p><a href="https://raw.githubusercontent.com/sean-roelofsen/Niagara-Region-WW/main/SR_175888_DWI_A1.png" target="_blank">Interview Slide A</a></p>
+
+<p><a href="https://raw.githubusercontent.com/sean-roelofsen/Niagara-Region-WW/main/SR_175888_DWI_B_2.png" target="_blank">Interview Slide B</a></p>
+
+<p><a href="https://raw.githubusercontent.com/sean-roelofsen/Niagara-Region-WW/main/SR_175888_DWI_C3.png" target="_blank">Interview Slide C</a></p>
+</div>
+
+<p><a href="https://drive.google.com/file/d/12IbdwmzGgOpGanJKyyafsD-uROJX5Ac5/view?usp=sharing" target="_blank">Interview Slide A</a></p>
+
+<p><a href="https://drive.google.com/file/d/16GQLaZzv7kPMN32EOuOwRD6Szqk0oSsS/view?usp=sharing" target="_blank">Interview Slide B</a></p>
+
+<p><a href="https://drive.google.com/file/d/1dHK0SjaBOLsX9lBO35nNA0Z_NJJ8Qxkq/view?usp=sharing" target="_blank">Interview Slide C</a></p>
+-->
+<!--
+<p><a href="https://github.com/sean-roelofsen/Niagara-Region-WW/blob/d1175f6b90d42e74bb614449bffcb8721f450fc0/SR_175888_DWI_A.pdf" target="_blank">Interview Slide A</a></p>
+<p><a href="https://github.com/sean-roelofsen/Niagara-Region-WW/blob/d1175f6b90d42e74bb614449bffcb8721f450fc0/SR_175888_DWI_A.pdf" target="_blank">Interview Slide B</a></p>
+<p><a href="https://github.com/sean-roelofsen/Niagara-Region-WW/blob/d1175f6b90d42e74bb614449bffcb8721f450fc0/SR_175888_DWI_C2.pdf" target="_blank">Interview Slide C</a></p>
+</div>-->
+
+	<!--javascript functions start here, calling and setting map layer, map center co-ordinates and zoom level-->
+    <!-- sample lat/longs for Toronto = 44, -79, SFO = 38, -121, VCR = 49, -123, Houston = 30, -95 , Calgary = 51, -114, Miami = 26, -80-->
+    <!-- lower zoom is farther out 4 = all North America, zoom 6 = full state or province, zoom 11 = Large City-->
+
+	<script>
+		var lat = 43.65;
+		var lng = -79.8;
+		var zoom = 9;
+
+		//var map = L.map('map', {
+			//takes off native default Leaflet API zoom control to allow for modified zoom control/home button below
+		//zoomControl: false
+		//	});
+		  
+		  //CartoDB 'Voyager with Labels' map tiles, grabs zoom and lat-long from variables listed above
+//		map.setView([lat, lng], zoom);
+	//		L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}.png', {
+	//				attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+	//	subdomains: 'abcd',
+ //   maxZoom: 19
+	//	}).addTo(map);
+
+   // Sets centre of map at the LatLong specified with Zoom level
+      var map = L.map('map', {
+          zoomControl: false
+          });
+
+        map.setView([lat, lng], zoom);
+       
+      // This example uses custom tiles taken from https://leaflet-extras.github.io/leaflet-providers/preview/
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+               maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> <a href="https://raw.githubusercontent.com/sean-roelofsen/HP-Abatement/main/AbatementList.png" target="_blank">*EO List*</a>'
+     }).addTo(map);
+       
+//https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png    carto voyager map
+
+//LAT LONG anywhere on single click
+//map.on('click', function(e) {        
+  //      var popLocation= e.latlng;
+    //    var popup = L.popup()
+      //  .setLatLng(popLocation)
+        //.setContent("Lat, Long: " + e.latlng.lat.toFixed(5) + ", " + e.latlng.lng.toFixed(5))                    
+        //.openOn(map);        
+    //});
+//*************
+
+//GPS START*******************
+(function (factory) {
+    if(typeof define === 'function' && define.amd) {
+    //AMD
+        define(['leaflet'], factory);
+    } else if(typeof module !== 'undefined') {
+    // Node/CommonJS
+        module.exports = factory(require('leaflet'));
+    } else {
+    // Browser globals
+        if(typeof window.L === 'undefined')
+            throw 'Leaflet must be loaded first';
+        factory(window.L);
+    }
+})(function (L) {
+
+L.Control.Gps = L.Control.extend({
+
+    includes: L.version[0] =='1' ? L.Evented.prototype : L.Mixin.Events,
+    //
+    //Managed Events:
+    //  Event           Data passed         Description
+    //
+    //  gps:located     {marker,latlng}     fired after gps marker is located
+    //  gps:disabled    {marker}            fired after gps is disabled
+    //  gps:error       {message}           fired after gps error
+    //
+    //Methods exposed:
+    //  Method          Description
+    //
+    //  getLocation     return Latlng and marker of current position
+    //  activate        active tracking on runtime
+    //  deactivate      deactive tracking on runtime
+    //
+    options: {
+        autoActive: false,      //activate control at startup
+        autoCenter: false,      //move map when gps location change
+        autoFollow: true,       //move map continuously
+        maxZoom: null,          //max zoom for autoCenter
+        textErr: '',            //error message on alert notification
+        callErr: null,          //function that run on gps error activating
+        title: 'Center map on your location',
+        marker: null,           //L.Marker used for location, default use a L.CircleMarker
+        style: {                //default L.CircleMarker styles
+            radius: 5,
+            weight: 2,
+            color: '#c20',
+            opacity: 1,
+            fillColor: '#f23',
+            fillOpacity: 1
+        },
+        //accuracy: true,       //show accuracy Circle
+        position: 'topleft',
+        transform: function(latlng) { return latlng },
+        //TODO add gpsLayer
+        //TODO timeout autoCenter
+    },
+
+    initialize: function(options) {
+        if(options && options.style)
+            options.style = L.Util.extend({}, this.options.style, options.style);
+        L.Util.setOptions(this, options);
+        this._errorFunc = this.options.callErr || this.showAlert;
+        this._isActive = false;
+        this._isLoading = false;
+        this._currentLocation = null;   //store last location
+    },
+
+    onAdd: function (map) {
+
+        this._map = map;
+
+        var container = L.DomUtil.create('div', 'leaflet-control-gps');
+
+        this._button = L.DomUtil.create('a', 'gps-button', container);
+        this._button.href = '#';
+        this._button.title = this.options.title;
+
+        L.DomEvent
+            .on(this._button, 'dblclick', L.DomEvent.stop, this)
+            .on(this._button, 'click', L.DomEvent.stop, this)
+            .on(this._button, 'click', this._switchGps, this);
+
+        this._alert = L.DomUtil.create('div', 'gps-alert', container);
+        this._alert.style.display = 'none';
+
+        this._gpsMarker = this.options.marker ? this.options.marker : new L.CircleMarker([0,0], this.options.style);
+        //if(this.options.accuracy)
+        //  this._accuracyCircle = new L.Circle([0,0], this.options.style);
+
+        if(this.options.autoFollow) {
+            this._map.on('locationfound', this._drawGps, this);
+        }
+        else {
+            this._map.once('locationfound', this._drawGps, this);
+        }
+
+        this._map.on('locationerror', this._errorGps, this);
+
+        if(this.options.autoActive)
+            this.activate();
+
+        return container;
+    },
+
+    onRemove: function(map) {
+        this.deactivate();
+
+        map.off('locationfound', this._drawGps, this)
+           .off('locationerror', this._errorGps, this);
+    },
+
+    _switchGps: function() {
+        if(this._isActive || this._isLoading)
+            this.deactivate();
+        else
+            this.activate();
+    },
+
+    getLocation: function() {   //get last location
+        return this._currentLocation;
+    },
+
+    activate: function() {
+
+        this._isActive = true;
+        this._isLoading = true;
+        this._map.addLayer( this._gpsMarker );
+
+        L.DomUtil.addClass(this._button, 'loading');
+
+        this._map.once('locationfound', function(e) {
+
+            L.DomUtil.removeClass(this._button, 'loading');
+            L.DomUtil.removeClass(this._button, 'disabled');
+            L.DomUtil.addClass(this._button, 'active');
+
+            this._isLoading = false;
+
+            if(this.options.autoCenter)
+                this._map.setView(e.latlng, this.options.maxZoom || this._map.getZoom());
+
+        }, this);
+
+        this._map.locate({
+            enableHighAccuracy: false,
+            watch: true,
+            setView: false,//this.options.autoCenter,
+            //maxZoom: this.options.maxZoom || this._map.getZoom()
+        });
+    },
+
+    deactivate: function() {
+
+        this._isActive = false;
+        this._isLoading = false;
+
+        L.DomUtil.removeClass(this._button, 'active');
+        L.DomUtil.removeClass(this._button, 'loading');
+
+        if(this._map) {
+            this._map.stopLocate();
+            this._map.removeLayer( this._gpsMarker );
+        }
+
+        //this._gpsMarker.setLatLng([-90,0]);  //move to antarctica!
+        //TODO make method .hide() using _icon.style.display = 'none'
+        this.fire('gps:disabled', {marker: this._gpsMarker});
+    },
+
+    _drawGps: function(e) {
+
+        var self = this;
+
+        //TODO use e.accuracy for gps circle radius/color
+        this._currentLocation = this.options.transform(e.latlng);
+
+        this._gpsMarker.setLatLng(this._currentLocation);
+
+        if(this.options.autoFollow) {
+            this._map.on('locationfound', this._drawGps, this);
+        }
+        else {
+            this._map.once('locationfound', this._drawGps, this);
+        }
+
+        this._map.on('locationerror', this._errorGps, this);
+
+        if(this.options.autoActive)
+            this.activate();
+
+    //      if(this._gpsMarker.accuracyCircle)
+    //          this._gpsMarker.accuracyCircle.setRadius((e.accuracy / 2).toFixed(0));
+    },
+
+    _errorGps: function(e) {
+        this.fire('gps:error', e);
+
+        this.deactivate();
+
+        L.DomUtil.addClass(this._button, 'disabled');
+
+        this._errorFunc.call(this, this.options.textErr || e.message);
+    },
+
+    /*  _updateAccuracy: function (event) {
+            var newZoom = this._map.getZoom(),
+                scale = this._map.options.crs.scale(newZoom);
+            this._gpsMarker.setRadius(this.options.style.radius * scale);
+            this._gpsMarker.redraw();
+        },
+    */
+    showAlert: function(text) {
+        this._alert.style.display = 'block';
+        this._alert.innerHTML = text;
+        var that = this;
+        clearTimeout(this.timerAlert);
+        this.timerAlert = setTimeout(function() {
+            that._alert.style.display = 'none';
+        }, 5000);
+    }
+});
+
+L.Map.addInitHook(function () {
+    if (this.options.gpsControl) {
+        this.gpsControl = L.control.gps(this.options.gpsControl);
+        this.addControl(this.gpsControl);
+    }
+});
+
+L.control.gps = function (options) {
+    return new L.Control.Gps(options);
+};
+
+    return L.Control.Gps;
+});
+
+
+ //TopoMap option
+//var OpenTopoMap = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+   // maxZoom: 17,
+   // attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a //href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+
+//});
+// https://tile.openstreetmap.org/{z}/{x}/{y}.png mapnik
+//https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png default openstreetmap
+//*******
+
+//function circleWithText(latLng, txt, circleOptions) {
+  //var icon = L.divIcon({
+ //   html: '<div class="txt">' + txt + '</div>',
+ //   className: 'circle-with-txt',
+ //   iconSize: [20, 20]
+ // });
+ // var circle = L.circleMarker(latLng, circleOptions);
+ // var marker = L.marker(latLng, {
+ //   icon: icon
+ // });
+ // var group = L.layerGroup([circle, marker]);
+//  return(group);
+//}
+
+//circleWithText([43.72, -79.38], 'Toronto', {radius: 10, color: 'white'}).addTo(map);
+
+
+
+//function circleWithText2(latLng, txt, circleOptions) {
+ // var icon = L.divIcon({
+  //  html: '<div class="txt">' + txt + '</div>',
+   // className: 'circle-with-txt',
+   // iconSize: [40, 40]
+  //});
+  //var circle = L.circleMarker(latLng, circleOptions);
+  //var marker = L.marker(latLng, {
+  //  icon: icon
+  //});
+  //var group = L.layerGroup([circle, marker]);
+ // return(group);
+//}
+
+//circleWithText2([44.05, -79.46], 'NM', {radius: 7, color: 'white'}).addTo(map);
+
+
+//creates search box and places at the top of the map for user searches provided by OpenStreetMap, zooms in to search entry upon selection
+ const provider = new window.GeoSearch.OpenStreetMapProvider();
+    const search = new GeoSearch.GeoSearchControl({
+      provider: provider,
+      //style: 'bar',
+      //updateMap: true,
+      //keepResult: true,
+      showMarker: true,
+      autoClose: true,
+      showPopup: true,
+       popupFormat: ({ query, result }) => `
+       ${result.label}<br />
+      LatLong: ${result.y.toFixed(5)}, ${result.x.toFixed(5)}
+  `,
+
+      marker: {
+        icon: new L.Icon.Default(),
+        draggable: false,
+  },
+    
+
+    //popupFormat: ({ result }) => [result.x.toString(), // optional: function    - default returns result label,
+    //resultFormat: ({ result }) => result.label, // optional: function    - default returns result label
+    keepResult: true, // optional: true|false  - default false
+    style: 'bar'
+
+
+
+   }).addTo(map);
+
+//L.control.locate({
+  //      keepCurrentZoomLevel: true,
+    //    darwCircle: false,
+      //  drawMarker: false,
+        //showPopup: false
+//}).addTo(map);
+
+L.Control.basemapsSwitcher = L.Control.extend({
+    options: {
+        position: 'topright',
+    },
+
+    initialize: function(layers, options){
+        L.Util.setOptions(this, options);
+        this.layers = layers
+    },
+
+    onAdd: function (map){
+        const container = this.container = L.DomUtil.create('div', 'leaflet-control-basemapsSwitcher');
+
+        this._createItems();
+        this._collapse();
+
+        container.addEventListener('mouseover', () => {
+            this._expand();
+        })
+
+        container.addEventListener('mouseout', () => {
+            this._collapse();
+        })
+
+        return container;
+    },
+
+    _createItems() {
+        this.layers.forEach( (obj, index) => {
+
+            obj.id = index
+
+            const imgContainer = L.DomUtil.create('div', 'basemapImg');
+            const img = L.DomUtil.create('div');
+            const name = L.DomUtil.create('div', 'name');
+            const check = L.DomUtil.create('div', 'check');
+            name.innerHTML = obj.name
+
+            if(obj.layer?._map){
+                this.activeMap = obj
+                check.classList.add('activeMap');
+            }
+            
+            img.style.backgroundImage = `url(${obj.icon})`;
+            imgContainer.append(img)
+            img.append(check)
+            img.append(name)
+            
+            imgContainer.addEventListener('click', () =>{
+
+                this._removeLayers(obj.layer);
+                
+                if(!obj.layer?._map){
+                    obj.layer.addTo(this._map);
+                    this.activeMap = obj;
+                    this._collapse();
+
+                    check.classList.add('activeMap');
+                }
+
+            })
+
+            this.container.append(imgContainer)
+
+        })
+    },
+
+    _removeLayers(layer){
+
+        this.layers.forEach( (obj) =>{
+            if(obj.layer._leaflet_id !== layer._leaflet_id && obj.layer?._map) {
+                this._map.removeLayer(obj.layer);
+            }
+        })
+    },
+
+    _collapse(){
+
+        this.container.childNodes.forEach( (child, index) => {
+
+            if(index !== this.activeMap.id){
+                child.classList.add('hidden')
+                let check = child.querySelector('.check')
+                check.classList.remove('activeMap')
+            }
+        })
+
+    },
+
+    _expand(){
+
+        this.container.childNodes.forEach( (child) => {
+            child.classList.remove('hidden')
+        })
+    }
+
+})
+
+L.basemapsSwitcher = function(layers, options){
+    return new L.Control.basemapsSwitcher(layers, options);  
+}
+
+//creates home zoom control box, with large home icon and larger zoom+/- icons from fontawesome, home button returns to full out zoom and mapcenter
+    L.Control.zoomHome = L.Control.extend({
+    options: {
+        position: 'topleft',
+        zoomInText: '<i class="fa fa-plus fa-lg"></i>',
+        zoomInTitle: 'Zoom in',
+        zoomOutText: '<i class="fa fa-minus fa-lg"></i>',
+        zoomOutTitle: 'Zoom out',
+        zoomHomeText: '<i class="fa fa-home fa-lg" style="line-height:2;"></i>',
+        zoomHomeTitle: 'Zoom home'
+    },
+
+    onAdd: function (map) {
+        var controlName = 'gin-control-zoom',
+            container = L.DomUtil.create('div', controlName + ' leaflet-bar'),
+            options = this.options;
+
+        this._zoomInButton = this._createButton(options.zoomInText, options.zoomInTitle,
+        controlName + '-in', container, this._zoomIn);
+        this._zoomHomeButton = this._createButton(options.zoomHomeText, options.zoomHomeTitle,
+        controlName + '-home', container, this._zoomHome);
+        this._zoomOutButton = this._createButton(options.zoomOutText, options.zoomOutTitle,
+        controlName + '-out', container, this._zoomOut);
+
+        this._updateDisabled();
+        map.on('zoomend zoomlevelschange', this._updateDisabled, this);
+
+        return container;
+    },
+
+    onRemove: function (map) {
+        map.off('zoomend zoomlevelschange', this._updateDisabled, this);
+    },
+
+    _zoomIn: function (e) {
+        this._map.zoomIn(e.shiftKey ? 3 : 1);
+    },
+
+    _zoomOut: function (e) {
+        this._map.zoomOut(e.shiftKey ? 3 : 1);
+    },
+
+    _zoomHome: function (e) {
+        map.setView([lat, lng], zoom);
+    },
+
+    _createButton: function (html, title, className, container, fn) {
+        var link = L.DomUtil.create('a', className, container);
+        link.innerHTML = html;
+        link.href = '#';
+        link.title = title;
+
+        L.DomEvent.on(link, 'mousedown dblclick', L.DomEvent.stopPropagation)
+            .on(link, 'click', L.DomEvent.stop)
+            .on(link, 'click', fn, this)
+            .on(link, 'click', this._refocusOnMap, this);
+
+        return link;
+    },
+
+    _updateDisabled: function () {
+        var map = this._map,
+            className = 'leaflet-disabled';
+
+        L.DomUtil.removeClass(this._zoomInButton, className);
+        L.DomUtil.removeClass(this._zoomOutButton, className);
+
+        if (map._zoom === map.getMinZoom()) {
+            L.DomUtil.addClass(this._zoomOutButton, className);
+        }
+        if (map._zoom === map.getMaxZoom()) {
+            L.DomUtil.addClass(this._zoomInButton, className);
+        }
+    }
+});
+
+// add the new custom zoom control to the map with home button and larger fontawesome icons for clarity (defaults too small)
+var zoomHome = new L.Control.zoomHome();
+zoomHome.addTo(map);
+
+document.getElementById('toggle-button').addEventListener('click', function () {
+    toggle(document.querySelectorAll('.target'));
+});
+
+function toggle (elements, specifiedDisplay) {
+  var element, index;
+
+  elements = elements.length ? elements : [elements];
+  for (index = 0; index < elements.length; index++) {
+    element = elements[index];
+
+    if (isElementHidden(element)) {
+      element.style.display = '';
+
+      // If the element is still hidden after removing the inline display
+      if (isElementHidden(element)) {
+        element.style.display = specifiedDisplay || 'block';
+      }
+    } else {
+      element.style.display = 'none';
+    }
+  }
+  function isElementHidden (element) {
+    return window.getComputedStyle(element, null).getPropertyValue('display') === 'none';
+  }
+}
+
+//ADD and REMOVE ALL *****************************
+document.getElementById('buttonOff').addEventListener('click', function (event) {
+    event.preventDefault();
+  map.removeLayer(marker);
+  for (var i in overlays) {
+    console.log(i);
+    map.removeLayer(overlays[i]);
+  }
+});
+
+  
+
+document.getElementById('buttonOn').addEventListener('click', function (event) {
+    event.preventDefault();
+  
+  for (var i in overlays) {
+    console.log(i);
+    map.addLayer(overlays[i]);
+  }
+});
+
+//*****************************
+
+new L.basemapsSwitcher([
+
+    {
+    layer: L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{
+      //attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+    }).addTo(map), //DEFAULT MAP
+    icon: 'https://raw.githubusercontent.com/sean-roelofsen/HP-Abatement/main/Basemap1Carto.png',
+    name: 'Mobile'
+  },
+  {
+    layer: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+      //attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }), 
+    icon: 'https://raw.githubusercontent.com/sean-roelofsen/HP-Abatement/main/ESRIWSMThumb.png',
+    name: 'Street'
+  },
+  
+  {
+    layer: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+     // attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+    }),
+    icon: 'https://raw.githubusercontent.com/sean-roelofsen/HP-Abatement/main/AerialImageryESRIThumb.png',
+    name: 'Imagery'
+  },
+], { position: 'bottomright' }).addTo(map);
+
+//OpenTopoMap- https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png
+//Topo thumb https://raw.githubusercontent.com/sean-roelofsen/HP-Abatement/main/Basemap3TopoThumb.png
+
+//ESRI WOrld Imagery - https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}
+//thumbnail         https://raw.githubusercontent.com/sean-roelofsen/HP-Abatement/main/AerialImageryESRIThumb.png
+
+//ESRI WorldStreetMap     https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}
+// thumbnail   https://raw.githubusercontent.com/sean-roelofsen/HP-Abatement/main/ESRIWSMThumb.png
+
+// OSM http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png
+// thumbnail https://raw.githubusercontent.com/sean-roelofsen/HP-Abatement/main/Basemap2OSM.png
+
+//************** CUSTOM ICON CODE AREA ********************
+//create all map icons here with free url links from www.flaticon.com, no token required for these free icons, should remain active
+//simply copy/paste url into these variables
+
+//https://cdn-icons-png.flaticon.com/512/595/595005.png  red dot
+//https://cdn-icons-png.flaticon.com/512/4668/4668400.png  pin
+//https://cdn-icons-png.flaticon.com/512/727/727598.png pin with stand
+//https://cdn-icons-png.flaticon.com/512/1828/1828535.png bullseye red dot
+//https://cdn-icons-png.flaticon.com/512/58/58960.png  black marker1
+//https://cdn-icons-png.flaticon.com/512/684/684908.png red marker
+//https://cdn-icons-png.flaticon.com/512/684/684850.png black marker1 with bullesye
+//https://cdn-icons-png.flaticon.com/512/7893/7893157.png black marker with circle shadow
+//https://cdn-icons-png.flaticon.com/512/149/149983.png  black pin
+//https://cdn-icons-png.flaticon.com/512/3722/3722026.png black marker with diamond base
+//https://cdn-icons-png.flaticon.com/512/4874/4874738.png red marker ***
+//https://cdn-icons-png.flaticon.com/512/7525/7525205.png sharper red marker ***
+//https://cdn-icons-png.flaticon.com/512/252/252106.png red marker thick black outline 
+//https://cdn-icons-png.flaticon.com/512/1020/1020312.png red pin black outline
+//https://cdn-icons-png.flaticon.com/512/7828/7828824.png red marker small black line under  USE
+//https://cdn-icons-png.flaticon.com/512/7828/7828955.png red pin with open cirle under
+// 21 https://cdn-icons-png.flaticon.com/512/270/270814.png blue PS
+// 21 https://cdn-icons-png.flaticon.com/512/5202/5202316.png Blue pump
+// 20 https://cdn-icons-png.flaticon.com/512/6646/6646541.png blue W
+// 22 https://cdn-icons-png.flaticon.com/512/1686/1686585.png Water Tower
+// 23 https://cdn-icons-png.flaticon.com/512/7584/7584166.png Sewage pipe
+// https://cdn-icons-png.flaticon.com/512/1020/1020261.png pin black outline
+
+
+var icon1url = "https://cdn-icons-png.flaticon.com/512/4668/4668400.png";
+
+//var icon2url = "https://cdn-icons-png.flaticon.com/512/2934/22.png";
+
+var icon3url = "https://cdn-icons-png.flaticon.com/512/934/22.png";
+
+var icon4url = "https://cdn-icons-png.flaticon.com/512/594/590.png";
+
+var icon5url = "https://cdn-icons-png.flaticon.com/512/143/145.png";
+
+var icon6url = "https://cdn-icons-png.flaticon.com/512/934/22.png";
+
+var icon7url = "https://cdn-icons-png.flaticon.com/512/934/22.png";
+
+var icon8url = "https://cdn-icons-png.flaticon.com/512/934/22.png";
+
+var icon9url = "https://cdn-icons-png.flaticon.com/512/934/22.png";
+
+var icon10url = "https://cdn-icons-png.flaticon.com/512/934/22.png";
+
+var icon11url = "https://cdn-icons-png.flaticon.com/512/934/22.png";
+
+//var icon12url = "https://cdn-icons-png.flaticon.com/512/934/22.png";
+
+var icon20url = "https://cdn-icons-png.flaticon.com/512/4668/4668400.png";
+
+var icon21url = "https://cdn-icons-png.flaticon.com/512/4668/4668400.png";
+
+var icon22url = "https://cdn-icons-png.flaticon.com/512/4668/4668400.png";
+
+var icon23url = "https://cdn-icons-png.flaticon.com/512/1020/1020261.png";
+
+var icon24url = "https://cdn-icons-png.flaticon.com/512/1020/1020261.png";
+
+var icon25url = "https://cdn-icons-png.flaticon.com/512/1020/10261.png";
+
+var icon26url = "https://cdn-icons-png.flaticon.com/512/1020/1061.png";
+
+var icon27url = "https://cdn-icons-png.flaticon.com/512/1020/101.png";
+
+var icon28url = "https://cdn-icons-png.flaticon.com/512/8804/8804765.png";
+// https://cdn-icons-png.flaticon.com/512/595/595005.png  plain red circle
+// dark orange https://cdn-icons-png.flaticon.com/512/8804/8804765.png
+
+var icon29url = "https://cdn-icons-png.flaticon.com/512/594/594580.png";
+
+var icon30url = "https://cdn-icons-png.flaticon.com/512/1783/16.png";
+
+var icon31url = "https://cdn-icons-png.flaticon.com/512/1783/36.png";
+
+var icon32url = "https://cdn-icons-png.flaticon.com/512/1783/36.png";
+
+
+//*********************
+
+//END OF ICON VARIABLES
+
+//icon programming refers to icon url linkls above, no need to change this section excpet for icon size, if required
+
+var icon1 = L.icon({
+        iconUrl: icon1url,
+        iconSize: [18, 18]
+    });
+
+//var icon2 = L.icon({
+ //       iconUrl: icon2url,
+  //      iconSize: [38, 10]
+ //   });
+
+var icon3 = L.icon({
+        iconUrl: icon3url,
+        iconSize: [3, 3]
+    });
+
+var icon4 = L.icon({
+        iconUrl: icon4url,
+        iconSize: [4, 4]
+    });
+
+var icon5 = L.icon({
+        iconUrl: icon5url,
+        iconSize: [20, 20]
+    });
+
+var icon6 = L.icon({
+        iconUrl: icon6url,
+        iconSize: [20, 20]
+    });
+
+var icon7 = L.icon({
+        iconUrl: icon7url,
+        iconSize: [20, 20]
+    });
+
+var icon8 = L.icon({
+        iconUrl: icon8url,
+        iconSize: [20, 20]
+    });
+
+var icon9 = L.icon({
+        iconUrl: icon9url,
+        iconSize: [20, 20]
+    });
+
+var icon10 = L.icon({
+        iconUrl: icon10url,
+        iconSize: [20, 20]
+    });
+
+var icon11 = L.icon({
+        iconUrl: icon11url,
+        iconSize: [20, 20]
+    });
+
+//var icon12 = L.icon({
+  //      iconUrl: icon12url,
+    //    iconSize: [20, 20]
+    //});
+
+var icon20 = L.icon({
+        iconUrl: icon20url,
+        iconSize: [20, 20]
+    });
+
+var icon21 = L.icon({
+        iconUrl: icon21url,
+        iconSize: [20, 20]
+    });
+
+var icon22 = L.icon({
+        iconUrl: icon22url,
+        iconSize: [20, 20]
+    });
+
+var icon23 = L.icon({
+        iconUrl: icon23url,
+        iconSize: [20, 20]
+    });
+
+var icon24 = L.icon({
+        iconUrl: icon24url,
+        iconSize: [20, 20]
+    });
+
+var icon25 = L.icon({
+        iconUrl: icon25url,
+        iconSize: [20, 20]
+    });
+
+var icon26 = L.icon({
+        iconUrl: icon26url,
+        iconSize: [20, 20]
+    });
+
+var icon27 = L.icon({
+        iconUrl: icon27url,
+        iconSize: [20, 20]
+    });
+
+var icon28 = L.icon({
+        iconUrl: icon28url,
+        iconSize: [15, 15]
+    });
+
+var icon29 = L.icon({
+        iconUrl: icon29url,
+        iconSize: [10, 10]
+    });
+
+var icon30 = L.icon({
+        iconUrl: icon30url,
+        iconSize: [15, 15]
+    });
+
+var icon31 = L.icon({
+        iconUrl: icon31url,
+        iconSize: [15, 15]
+    });
+
+var icon32 = L.icon({
+        iconUrl: icon32url,
+        iconSize: [15, 15]
+    });
+
+
+
+//create markers at lat/long with list of icons above, no need to change this code
+function getOneMarker(feature, latlng) {
+  return L.marker(latlng, {
+    icon: icon1
+  });
+}
+
+//function getTwoMarker(feature, latlng) {
+  //return L.marker(latlng, {
+    //icon: icon2
+  //});
+//}
+
+function getThreeMarker(feature, latlng) {
+  return L.marker(latlng, {
+    icon: icon3
+  });
+}
+
+function getFourMarker(feature, latlng) {
+  return L.marker(latlng, {
+    icon: icon4
+  });
+}
+
+function getFiveMarker(feature, latlng) {
+  return L.marker(latlng, {
+    icon: icon5
+  });
+}
+
+function getSixMarker(feature, latlng) {
+  return L.marker(latlng, {
+    icon: icon6
+  });
+}
+
+function getSevenMarker(feature, latlng) {
+  return L.marker(latlng, {
+    icon: icon7
+  });
+}
+
+function getEightMarker(feature, latlng) {
+  return L.marker(latlng, {
+    icon: icon8
+  });
+}
+
+function getNineMarker(feature, latlng) {
+  return L.marker(latlng, {
+    icon: icon9
+  });
+}
+
+function getTenMarker(feature, latlng) {
+  return L.marker(latlng, {
+    icon: icon10
+  });
+}
+
+function getElevenMarker(feature, latlng) {
+  return L.marker(latlng, {
+    icon: icon11
+  });
+}
+
+//function getTwelveMarker(feature, latlng) {
+ // return L.marker(latlng, {
+ //   icon: icon12
+ // });
+//}
+
+function getTwentyMarker(feature, latlng) {
+  return L.marker(latlng, {
+    icon: icon20
+  });
+}
+
+function getTwentyOneMarker(feature, latlng) {
+  return L.marker(latlng, {
+    icon: icon21
+  });
+}
+
+function getTwentyTwoMarker(feature, latlng) {
+  return L.marker(latlng, {
+    icon: icon22
+  });
+}
+
+function getTwentyThreeMarker(feature, latlng) {
+  return L.marker(latlng, {
+    icon: icon23
+  });
+}
+
+function getTwentyFourMarker(feature, latlng) {
+  return L.marker(latlng, {
+    icon: icon24
+  });
+}
+
+function getTwentyFiveMarker(feature, latlng) {
+  return L.marker(latlng, {
+    icon: icon25
+  });
+}
+
+function getTwentySixMarker(feature, latlng) {
+  return L.marker(latlng, {
+    icon: icon26
+  });
+}
+
+function getTwentySevenMarker(feature, latlng) {
+  return L.marker(latlng, {
+    icon: icon27
+  });
+}
+
+function getTwentyEightMarker(feature, latlng) {
+  return L.marker(latlng, {
+    icon: icon28
+  });
+}
+
+function getTwentyNineMarker(feature, latlng) {
+  return L.marker(latlng, {
+    icon: icon29
+  });
+}
+
+function getThirtyMarker(feature, latlng) {
+  return L.marker(latlng, {
+    icon: icon30
+  });
+}
+
+function getThirtyOneMarker(feature, latlng) {
+  return L.marker(latlng, {
+    icon: icon31
+  });
+}
+
+function getThirtyTwoMarker(feature, latlng) {
+  return L.marker(latlng, {
+    icon: icon32
+  });
+}
+//*************** POP-UPS TRENARY CODE AREA BELOW************************
+
+//review your GeoJson data to figure out the column names, addd to list below if required.  
+//attach popups to the markers reading in geojson properties, excluding those with no information or 'undefined' via trenary operation. Pop-ups will only have information that exists and no 'undefined' text, looks cleaner and less cluttered. The source geojsons from Niagara OpenData are not all identical feature properties, so I examined them to determine which properties to parse. Trenary operations account for all of the feature properties that I want displayed in pop-up, and omit blanks or null.
+	
+
+function getPopup(feature, layer) {
+
+var popupText = ''
+;
+
+
+popupText += (feature.properties.NAME) ? ' ' + feature.properties.NAME : '';
+
+popupText += (feature.properties.Name) ? '<b>Plant: </b> ' + feature.properties.Name : '';
+
+popupText += (feature.properties.LEGAL_NAME) ? '<b>Municipality: <br></b> ' + feature.properties.LEGAL_NAME : '';
+
+popupText += (feature.properties.City_Name2) ? '<br>Area: ' + feature.properties.City_Name2 : '';
+
+popupText += (feature.properties.AREA_NAME) ? ' ' + feature.properties.AREA_NAME : '';
+
+popupText += (feature.properties.FACILITY_N) ? '<b>Facility: </b>' + feature.properties.FACILITY_N : '';
+
+popupText += (feature.properties.USER_Site_) ? '<b>Facility: </b>' + feature.properties.USER_Site_ : '';
+
+//popupText += (feature.properties.USER_Site1) ? '<br><br>Type: ' + feature.properties.USER_Site1 : '';
+
+popupText += (feature.properties.USER_DWS_N) ? '<br><br>DWS Name: ' + feature.properties.USER_DWS_N : '';
+
+popupText += (feature.properties.USER_DWS_1) ? '<br>DWS #: ' + feature.properties.USER_DWS_1 : '';
+
+popupText += (feature.properties.Address_short) ? '<br>' + feature.properties.Address_short : '';
+
+popupText += (feature.properties.Municipality) ? ', ' + feature.properties.Municipality : '';
+
+popupText += (feature.properties.County) ? '<br>' + feature.properties.County : '';
+
+popupText += (feature.properties.ADMINISTRA) ? '<br><br>Catchment: ' + feature.properties.ADMINISTRA : '';
+
+popupText += (feature.properties.OPERATIONA) ? '<br>Operations Zone: ' + feature.properties.OPERATIONA : '';
+
+popupText += (feature.properties.STREET_NUM) ? '<br> ' + feature.properties.STREET_NUM : '';
+
+popupText += (feature.properties.USER_Stree) ? '<br>Address: ' + feature.properties.USER_Stree : '';
+
+popupText += (feature.properties.USER_Str_1) ? ' ' + feature.properties.USER_Str_1 : '';
+
+popupText += (feature.properties.USER_Str_2) ? ' ' + feature.properties.USER_Str_2 : '';
+
+popupText += (feature.properties.STREET_NAM) ? ' ' + feature.properties.STREET_NAM : '';
+
+popupText += (feature.properties.SUFFIX) ? ' ' + feature.properties.SUFFIX : '';
+
+popupText += (feature.properties.MUNICIPALI) ? '<br>' + feature.properties.MUNICIPALI : '';
+
+popupText += (feature.properties.USER_City) ? ', ' + feature.properties.USER_City : '';
+
+popupText += (feature.properties.USER_Regio) ? '<br>Region: ' + feature.properties.USER_Regio : '';
+
+//popupText += (feature.properties.OBJECTID) ? '<br>Number: ' + feature.properties.OBJECTID : '';
+
+popupText += (feature.properties.MATERIAL) ? '<br>Material: ' + feature.properties.MATERIAL : '';
+
+popupText += (feature.properties.DIAMETER) ? '<br>Diameter (mm): ' + feature.properties.DIAMETER : '';
+
+popupText += (feature.properties.Treatment_type) ? '<br><br>Treatment: ' + feature.properties.Treatment_type : '';
+
+popupText += (feature.properties.ECA) ? '<br>ECA: ' + feature.properties.ECA : '';
+
+popupText += (feature.properties.Inspector) ? '<br><br><b>Inspector: </b>' + feature.properties.Inspector : '';
+
+popupText += (feature.properties.NAME3) ? '<b>Watershed(s): </b> ' + feature.properties.NAME3 : '';
+
+popupText += (feature.properties.NAME4) ? '<br> ' + feature.properties.NAME4 : '';
+
+popupText += (feature.properties.NAME5) ? '<br> ' + feature.properties.NAME5 : '';
+
+popupText += (feature.properties.NAME_2) ? '<br>SP Area: ' + feature.properties.NAME_2 : '';
+
+popupText += (feature.properties.NAME_3) ? '<br>SP Region: ' + feature.properties.NAME_3 : '';
+
+popupText += (feature.properties.OFFICIAL_M) ? '<br>Municipality: ' + feature.properties.OFFICIAL_M : '';
+
+popupText += (feature.properties.UPPER_TI_1) ? '<br>Region: ' + feature.properties.UPPER_TI_1 : '';
+
+popupText += (feature.properties.INSPECTOR) ? '<br><br><b>Inspector:</b> ' + feature.properties.INSPECTOR : '';
+
+//popupText += (feature.properties.TORDW) ? '<br><br>Toronto DW: ' + feature.properties.TORDW : '';
+
+//popupText += (feature.properties.TORWW) ? '<br><br>Toronto WW: ' + feature.properties.TORWW : '';
+
+popupText += (feature.properties.Towns) ? '<br><br>Other Locales: ' + feature.properties.Towns : '';
+
+popupText += (feature.properties.VSAFIELD_N) ? '<br>Wellhead Protection Zone: ' + feature.properties.VSAFIELD_N : '';
+
+popupText += (feature.properties.ZONENAME) ? '<br>Zone ID: ' + feature.properties.ZONENAME : '';
+
+popupText += (feature.properties.LT_MUNI_LA) ? '<br><br>Municipality: ' + feature.properties.LT_MUNI_LA : '';
+
+popupText += (feature.properties.INTAKE_NAM) ? '<br>Intake Name: ' + feature.properties.INTAKE_NAM : '';
+
+popupText += (feature.properties.IPZTYPE) ? '<br>IPZ Type (1/2): ' + feature.properties.IPZTYPE : '';
+
+popupText += (feature.properties.VULNERABIL) ? '<br>Vulnerability Score: ' + feature.properties.VULNERABIL : '';
+
+popupText += (feature.properties.DWS_NAME) ? '<br>DWS Name (Intake): <br><u><b>' + feature.properties.DWS_NAME : '';
+
+popupText += (feature.properties.DWIS_Name) ? '<br>DWS Name: <br><u><b>' + feature.properties.DWIS_Name : '';
+
+popupText += (feature.properties.WaterSyste) ? '</u></b><br><br>More Info: ' + feature.properties.WaterSyste : '';
+
+popupText += (feature.properties.WTP_Name) ? '</u></b><br>Well Name: ' + feature.properties.WTP_Name : '';
+
+popupText += (feature.properties.WellIdenti) ? '</u></b><br><br>More Info: ' + feature.properties.WellIdenti : '';
+
+popupText += (feature.properties.DWIS_NO) ? '<br>DWS #: ' + feature.properties.DWIS_NO : '';
+
+popupText += (feature.properties.IPZType) ? '<br><b>Intake Protection Zone (1-2): ' + feature.properties.IPZType : '';
+
+popupText += (feature.properties.ZoneName) ? '<br>Wellhead Protection Zone (A->D): ' + feature.properties.ZoneName : '';
+
+popupText += (feature.properties.LABEL) ? '<br>Source Protection Area: <br> ' + feature.properties.LABEL : '';
+
+popupText += (feature.properties.SPPWebsite) ? '<br><br>Website: ' + feature.properties.SPPWebsite : '';
+
+popupText += (feature.properties.OFF_NAME) ? '<br>Watercourse Name: <br> ' + feature.properties.OFF_NAME : '';
+
+
+
+
+
+
+
+
+// "STREET_NUM":"725","STREET_NAM":"Lakeshore","SUFFIX":"Road","DIRECTION":"","P_O_BOX":"","MUNICIPALI":"Fort Erie",
+
+//feeding trenary results through a replace function in order to format URLs into proper clickable hyperlinks in the popups
+//if they have URLs in the geojson properties, will pull in as a hyperlink but does not ensure the link is working on their other end
+// no need to change this code section
+
+var replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
+var replacedText = (popupText).replace(replacePattern1, '<br><a href="$1" target="_blank">weblink</a>');
+
+
+layer.bindPopup(replacedText);
+}
+
+//****************END POP-UPS CODE SECTION*********************
+
+
+
+//}
+//this section creates empty GeoJSON layers to be populated later
+//no need to change this code unless you want the layer to be NOT VISIBLE by DEFAULT, add // to any layer at "})//.addTo(map);" (layer5 is turned off here)
+// this will make the layer visible by clicking on the legend checkbox
+
+var oneLayer = L.geoJson(false, {
+    pointToLayer: getOneMarker,
+    onEachFeature: getPopup
+    //color: "#ed4d4d"
+    //color: "#0000FF",
+})//.addTo(map);
+
+//var twoLayer = L.geoJson(false, {
+    //pointToLayer: getTwoMarker,
+   // onEachFeature: getPopup,
+    //color: "#ed4d4d"
+   // color: "#0000FF"
+//}).addTo(map);
+
+var threeLayer = L.geoJson(false, {
+   pointToLayer: getThreeMarker,
+   onEachFeature: getPopup,
+  //color: "#4ADEDE"
+  color: "#FF0000"
+})//.addTo(map);
+
+var fourLayer = L.geoJson(false, {
+   pointToLayer: getFourMarker,
+   onEachFeature: getPopup,
+   //color: "#ffa500"
+   color: "#e6550d" 
+})//.addTo(map);
+
+var fiveLayer = L.geoJson(false, {
+    pointToLayer: getFiveMarker,
+    onEachFeature: getPopup,
+    //color: "#FFFFFF" white
+    color: "#005C46"
+})//.addTo(map);
+
+var sixLayer = L.geoJson(false, {
+    pointToLayer: getSixMarker,
+    onEachFeature: getPopup,
+    color: "#FF0000"
+})//.addTo(map);
+
+var sevenLayer = L.geoJson(false, {
+    pointToLayer: getSevenMarker,
+    onEachFeature: getPopup,
+    color: "#2b8cbe"
+})//.addTo(map);
+
+var eightLayer = L.geoJson(false, {
+    pointToLayer: getEightMarker,
+    onEachFeature: getPopup,
+    color: "#FFFF00"
+})//.addTo(map);
+
+var nineLayer = L.geoJson(false, {
+    pointToLayer: getNineMarker,
+    onEachFeature: getPopup,
+    color: "#c51b8a"
+})//.addTo(map);
+
+var tenLayer = L.geoJson(false, {
+    pointToLayer: getTenMarker,
+    onEachFeature: getPopup,
+    //color: "#31a354" greens
+    //color: "#009B77"
+    //color: "#005C46" emerald darker
+    color: "#26ABFF"
+})//.addTo(map);
+
+var elevenLayer = L.geoJson(false, {
+    pointToLayer: getElevenMarker,
+    onEachFeature: getPopup,
+    color: "#0000FF"
+})//.addTo(map);
+
+//var twelveLayer = L.geoJson(false, {
+    //pointToLayer: getTwelveMarker,
+   // onEachFeature: getPopup,
+   // color: "#0000FF"
+//}).addTo(map);
+
+var twentyLayer = L.geoJson(false, {
+    pointToLayer: getTwentyMarker,
+    onEachFeature: getPopup,
+    //color: "#ed4d4d"
+    color: "#FFFF00"
+}).addTo(map);
+
+var twentyoneLayer = L.geoJson(false, {
+    pointToLayer: getTwentyOneMarker,
+    onEachFeature: getPopup,
+    //color: "#ed4d4d"
+    color: "#710096"
+}).addTo(map);
+
+var twentytwoLayer = L.geoJson(false, {
+    pointToLayer: getTwentyTwoMarker,
+    onEachFeature: getPopup,
+    //color: "#ed4d4d"
+    color: "#00FF00"
+}).addTo(map);
+
+var twentythreeLayer = L.geoJson(false, {
+    pointToLayer: getTwentyThreeMarker,
+    onEachFeature: getPopup,
+    //color: "#ed4d4d"
+    color: "#FF6600"
+}).addTo(map);
+
+var twentyfourLayer = L.geoJson(false, {
+    pointToLayer: getTwentyFourMarker,
+    onEachFeature: getPopup,
+    //color: "#ed4d4d"
+    color: "#FF0000"
+}).addTo(map);
+
+var twentyfiveLayer = L.geoJson(false, {
+    pointToLayer: getTwentyFiveMarker,
+    onEachFeature: getPopup,
+    //color: "#ed4d4d"
+    color: "#800000"
+}).addTo(map);
+
+var twentysixLayer = L.geoJson(false, {
+    pointToLayer: getTwentySixMarker,
+    onEachFeature: getPopup,
+    //color: "#ed4d4d"
+    color: "#d4af37"
+    //color: "#964B00"
+}).addTo(map);
+
+var twentysevenLayer = L.geoJson(false, {
+    pointToLayer: getTwentySevenMarker,
+    onEachFeature: getPopup,
+    color: "#000000"
+    //color: "#BEC2CB"
+})//.addTo(map);
+
+var twentyeightLayer = L.geoJson(false, {
+    pointToLayer: getTwentyEightMarker,
+    onEachFeature: getPopup
+    //color: "#ed4d4d"
+    //color: "#D2691E"
+})//.addTo(map);
+
+var twentynineLayer = L.geoJson(false, {
+    pointToLayer: getTwentyNineMarker,
+    onEachFeature: getPopup
+    //color: "#ed4d4d"
+    //color: "#D2691E"
+})//.addTo(map);
+
+var thirtyLayer = L.geoJson(false, {
+    pointToLayer: getThirtyMarker,
+    onEachFeature: getPopup,
+    //color: "#ed4d4d"
+    color: "#0000FF"
+})//.addTo(map);
+
+var thirtyoneLayer = L.geoJson(false, {
+    pointToLayer: getThirtyOneMarker,
+    onEachFeature: getPopup,
+    //color: "#ed4d4d"
+    color: "#40E0D0"
+})//.addTo(map);
+
+
+//function getColor(ZoneName) {
+    //return ZoneName == 'A' ? '#800026' :;
+   //        ZoneName == 'B' ? '#BD0026' :;
+   //        ZoneName == 'C' ? '#E31A1C' :;
+    //       ZoneName == 'D' ? '#FC4E2A' :;
+    //       '';
+                        
+var thirtytwoLayer = L.geoJSON(geoJson32, {
+    onEachFeature: getPopup,
+    style: function(feature) {
+        switch (feature.properties.ZoneName) {            
+            case 'D': return {color: "#ffffb2", weight: 5, fillOpacity: 0.7};
+            case 'C': return {color: "#fecc5c", weight: 5, fillOpacity: 0.7};
+            case 'C1': return {color: "#fecc5c", weight: 5, fillOpacity: 0.7};
+            case 'B': return {color: "#fd8d3c", weight: 5, fillOpacity: 0.7};
+            case 'A': return {color: "#e31a1c", weight: 5, fillOpacity: 0.7};
+        }
+    }
+})//.addTo(map);
+
+// colorbrewer array ['#ffffb2','#fecc5c','#fd8d3c','#e31a1c']
+
+//var thirtytwoLayer = L.geoJson(geoJson32, {
+   // pointToLayer: getThirtyTwoMarker,
+   // onEachFeature: getPopup, 
+
+    //color: "#ed4d4d"
+    //color: getColor()
+    //color: "#964B00"
+   // })//.addTo(map);
+
+
+//Used for Legend Dividers only - empty layers
+var zeroLayer = L.geoJson(false, {
+    });
+var zero1Layer = L.geoJson(false, {
+    });
+var zero2Layer = L.geoJson(false, {
+    });
+var zero3Layer = L.geoJson(false, {
+    });
+
+var zero4Layer = L.geoJson(false, {
+    });
+//*************
+
+//*** GEOJSON LAYERS CODE BELOW**********
+
+//change your geojson urls here!  Add more, remove, make null with // before code line
+//simply copy/paste the external GeoJson source url into the proper location
+
+var geoJson1 = "https://raw.githubusercontent.com/sean-roelofsen/Halton_Peel/main/WTPs.geojson";
+
+
+
+//var geoJson25 = "https://raw.githubusercontent.com/sean-roelofsen/Halton_Peel/main/WTPs.geojson";
+
+
+//var geoJson2 = "https://raw.githubusercontent.com/sean-roelofsen/OwenSoundWW/main/OSWatersheds.geojson";
+
+var geoJson3 = "https://raw.githubusercontent.com/sean-roelofsen/Halton_Peel/main/Humber-Don.geojson";
+
+var geoJson4 = "https://raw.githubusercontent.com/sean-roelofsen/Halton_Peel/main/KawarthaLakes.geojson";
+
+var geoJson5 = "https://raw.githubusercontent.com/sean-roelofsen/Halton_Peel/main/LakeONShoreline.geojson";
+
+//var geoJson6 = "https://raw.githubusercontent.com/sean-roelofsen/Halton_Peel/main/LakeOntario.geojson";
+
+var geoJson6 = "https://raw.githubusercontent.com/sean-roelofsen/Halton_Peel/main/Regions.geojson";
+
+
+
+var geoJson7 = "https://raw.githubusercontent.com/sean-roelofsen/Halton_Peel/main/OtanabeeR.geojson";
+
+var geoJson8 = "https://raw.githubusercontent.com/sean-roelofsen/Halton_Peel/main/ScugogRiver.geojson";
+
+var geoJson9 = "https://raw.githubusercontent.com/sean-roelofsen/Halton_Peel/main/Severn-LSimcoe.geojson";
+
+var geoJson10 = "https://raw.githubusercontent.com/sean-roelofsen/Halton_Peel/main/Sixteen-Credit.geojson";
+
+var geoJson11 = "https://raw.githubusercontent.com/sean-roelofsen/HP-Abatement/main/HP-Rivers2.geojson";
+
+var geoJson20 = "https://raw.githubusercontent.com/sean-roelofsen/HP-Abatement/main/Brampton.geojson";
+
+var geoJson21 = "https://raw.githubusercontent.com/sean-roelofsen/HP-Abatement/main/Burlington.geojson";
+
+var geoJson22 = "https://raw.githubusercontent.com/sean-roelofsen/HP-Abatement/main/Caledon.geojson";
+
+var geoJson23 = "https://raw.githubusercontent.com/sean-roelofsen/HP-Abatement/main/HaltonHills2.geojson";
+
+var geoJson24 = "https://raw.githubusercontent.com/sean-roelofsen/HP-Abatement/main/Milton.geojson";
+
+var geoJson25 = "https://raw.githubusercontent.com/sean-roelofsen/HP-Abatement/main/Mississauga.geojson";
+
+var geoJson26 = "https://raw.githubusercontent.com/sean-roelofsen/HP-Abatement/main/Oakville.geojson";
+
+var geoJson27 = "https://raw.githubusercontent.com/sean-roelofsen/HP-Abatement/main/SPAs-HP.geojson";
+
+var geoJson28 = "https://raw.githubusercontent.com/sean-roelofsen/HP-Abatement/main/IntakesHP.geojson";
+
+var geoJson29 = "https://raw.githubusercontent.com/sean-roelofsen/HP-Abatement/main/WellsHP.geojson";
+
+var geoJson30 = "https://raw.githubusercontent.com/sean-roelofsen/HP-Abatement/main/IPZ-1-HP.geojson";
+
+var geoJson31 = "https://raw.githubusercontent.com/sean-roelofsen/HP-Abatement/main/IPZ-2-HP.geojson";
+
+var geoJson32 = "https://raw.githubusercontent.com/sean-roelofsen/HP-Abatement/main/WHPAs-HP.geojson";
+
+
+//var geoJson25 = "https://raw.githubusercontent.com/sean-roelofsen/Halton_Peel/main/HP-TO-SPAs.geojson";
+
+
+
+//  https://niagaraopendata.ca/dataset/6002fae9-9892-4982-8d21-5f8078b416d0/resource/ad23e906-16a5-4f37-b647-7f019fd744da/download/rmonsanitarycatchmentarea.json
+//NO CHANGES NEEDED - the code below populates GeoJSON layers with data from files listed above, no need to change this code 
+
+$.getJSON(geoJson1, function(data) {
+    oneLayer.addData(data);
+});
+
+//$.getJSON(geoJson2, function(data) {
+  //  twoLayer.addData(data);
+//});
+
+$.getJSON(geoJson3, function(data) {
+    threeLayer.addData(data);
+});
+
+$.getJSON(geoJson4, function(data) {
+  fourLayer.addData(data);
+});
+
+$.getJSON(geoJson5, function(data) {
+    fiveLayer.addData(data);
+});
+
+$.getJSON(geoJson6, function(data) {
+    sixLayer.addData(data);
+});
+
+$.getJSON(geoJson7, function(data) {
+    sevenLayer.addData(data);
+});
+
+$.getJSON(geoJson8, function(data) {
+    eightLayer.addData(data);
+});
+
+$.getJSON(geoJson9, function(data) {
+    nineLayer.addData(data);
+});
+
+$.getJSON(geoJson10, function(data) {
+    tenLayer.addData(data);
+});
+
+$.getJSON(geoJson11, function(data) {
+    elevenLayer.addData(data);
+});
+
+$.getJSON(geoJson20, function(data) {
+    twentyLayer.addData(data);
+});
+
+$.getJSON(geoJson21, function(data) {
+    twentyoneLayer.addData(data);
+});
+
+$.getJSON(geoJson22, function(data) {
+    twentytwoLayer.addData(data);
+});
+
+$.getJSON(geoJson23, function(data) {
+    twentythreeLayer.addData(data);
+});
+
+$.getJSON(geoJson24, function(data) {
+    twentyfourLayer.addData(data);
+});
+
+$.getJSON(geoJson25, function(data) {
+    twentyfiveLayer.addData(data);
+});
+
+$.getJSON(geoJson26, function(data) {
+    twentysixLayer.addData(data);
+});
+
+$.getJSON(geoJson27, function(data) {
+    twentysevenLayer.addData(data);
+});
+
+$.getJSON(geoJson28, function(data) {
+    twentyeightLayer.addData(data);
+});
+
+$.getJSON(geoJson29, function(data) {
+    twentynineLayer.addData(data);
+});
+
+$.getJSON(geoJson30, function(data) {
+    thirtyLayer.addData(data);
+});
+
+$.getJSON(geoJson31, function(data) {
+    thirtyoneLayer.addData(data);
+});
+
+
+$.getJSON(geoJson32, function(data) {
+    thirtytwoLayer.addData(data);
+});
+
+//******************* END GEOJSON LAYER CODE************************
+
+
+
+var overlays = {
+    //'-------  DW Infrastructure -------': zero1Layer,
+    //'Water Treatment Plants': oneLayer,
+    //'DW Production Wells': twentyLayer,
+    //'DW Pumping Stations': twentyoneLayer,
+    //'DW Storage Facilities': twentytwoLayer,
+    //'-------- WW Infrastructure --------': zero3Layer,
+    //'Wastewater Treatment Plants': twentythreeLayer,
+    //'Wastewater Pumping Stations': twentyfourLayer,
+    //'Watersheds': twoLayer,
+    '-------Municipal Boundaries----------': zero1Layer,
+    'City of Brampton': twentyLayer,
+    'City of Burlington': twentyoneLayer,
+    'Town of Caledon': twentytwoLayer,
+    'Town of Halton Hills': twentythreeLayer,
+    'Town of Milton': twentyfourLayer,
+    'City of Mississauga': twentyfiveLayer,
+    'Town of Oakville': twentysixLayer,
+    '-----Water Treatment Infrastructure----': zero4Layer,
+    'Surface Water Treatment Plants - Intakes': twentyeightLayer,    
+    'Intake Protection Zone - IPZ2s': thirtyoneLayer,
+    'Intake Protection Zone - IPZ1s': thirtyLayer,
+    'Drinking Water Production Wells (GW)': twentynineLayer,
+    'Wellhead Protection Area - WHPAs': thirtytwoLayer,
+    //'                                     ': zero2Layer, 
+    '--------- Source Protection ---------': zero2Layer,
+    'Source Protection Areas': twentysevenLayer,    
+    //'Regional Boundaries': sixLayer,
+    //'York-Simcoe Intake Protection Zones': twentysixLayer,
+    //'York-Simcoe Wellhead Proection Areas': twentysevenLayer,
+    //'                                    ': zeroLayer,
+    '--------- Area Watersheds ----------': zeroLayer,
+    'All Watercourses': elevenLayer,
+    'Sixteen Mile Creek-Credit River': tenLayer,    
+    'Humber River-Don River': threeLayer, 
+    'Lake Ontario Shoreline': fiveLayer,
+    //'Severn River-Lake Simcoe': nineLayer, 
+    //'Kawartha Lakes': fourLayer,
+    //'Otonabee River': sevenLayer,
+    //'Scugog River': eightLayer,        
+    
+        
+       };
+
+//var layerbox = L.control.layers(null, overlays, {position: 'topright'}).addTo(map);
+
+//var layerbox =L.removeControl.layers(map, zeroLayer);
+
+L.control.layers(null, overlays, {position: 'topright'}).addTo(map);
+
+var gps = new L.Control.Gps({
+        //autoActive:true,
+        autoCenter:true
+    });//inizialize control
+
+    gps
+    .on('gps:located', function(e) {
+          //e.marker.bindPopup(e.latlng.toString()).openPopup()
+        console.log(e.latlng, map.getCenter())
+    })
+    .on('gps:disabled', function(e) {
+        e.marker.closePopup()
+    });
+
+    gps.addTo(map);
+//END GPS ***********************************
+
+var icon2 = new L.Icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+});
+
+
+    map.clicked = 0;   
+var marker = L.marker([lat,lng],{draggable: true});
+map.on('click', function(event){
+    map.clicked = map.clicked + 1;
+    setTimeout(function(){
+        if(map.clicked == 1){
+            marker.setLatLng(event.latlng);
+            marker.setIcon(icon2);
+            //marker.bindPopup("" + event.latlng).openPopup();              
+            marker.addTo(map);
+            map.clicked = 0;
+            }
+                         
+     }, 300);
+});
+
+marker.clicked = 0;
+marker.on('click', function(event){
+    marker.clicked = marker.clicked + 1;
+    setTimeout(function(){
+        if(marker.clicked == 1){
+            marker.bindPopup("" + event.latlng).openPopup();              
+            marker.clicked = 0;
+            }
+             }, 300);
+});
+
+map.on('dblclick', function(event){
+    map.clicked = 0;
+    map.zoomIn();
+});
+
+// MAP SCALE BOTTOM LEFT
+var scaleControl = L.control.scale({
+  position: 'bottomleft'
+});
+
+scaleControl.addTo(map);
+//*************************
+
+	</script>
+    <!--<div id="copy"><a href="https://opengeo.tech/">Opengeo.tech</a> &bull; <a rel="author" href="https://opengeo.tech/stefano-cudini/">Stefano Cudini</a></div>
+<a href="https://github.com/stefanocudini/leaflet-gps"><img id="ribbon" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>-->
+</body>
+</html>
