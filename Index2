@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+ <meta charset=utf-8 />
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1.0">
+
+  
+
+  <!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <body>
+        <!--Added class row -->
+        <div class="page-container row">
+            <!---Added col-lg-4 class -->
+           <!-- Total 12 columns are divided into 3 parts as col-lg-4 -->
+            <div class="pricing-table col-lg-4">
+                <div class="pricing-table-header">
+                    
+                    <h3>&nbsp&nbsp<u>Inspectors (click to send)</u></h3>
+                </div>
+                <div class="pricing-table-space"></div>
+                <div class="pricing-table-features">
+                    <p><a href="mailto:demetra.koros@ontario.ca">&nbspDemetra Koros - email</a> &nbsp &nbsp &nbsp &nbsp<a href="tel:9054090496">cell: 905-409-0496</a></p>
+                    <p><a href="mailto:francisco.baldizon@ontario.ca">&nbspFrancisco Baldizon - email</a> &nbsp &nbsp &nbsp &nbsp<a href="tel:6476426739">cell: 647-642-6739</a></p>
+                    <p><a href="mailto:dee.cox@ontario.ca">&nbspDee Cox - email</a> &nbsp &nbsp &nbsp &nbsp<a href="tel:9059992097">cell: 905-999-2097</a></p>
+                    <p><a href="mailto:connie.height@ontario.ca">&nbspConnie Height - email</a> &nbsp &nbsp &nbsp &nbsp<a href="tel:4166975023">cell: 416-697-5023</a></p>
+                    <p><a href="mailto:melissa.hills@ontario.ca">&nbspMelissa Hills - email</a> &nbsp &nbsp &nbsp &nbsp<a href="tel:9059990089">cell: 905-999-0089</a></p>
+                    <p><a href="mailto:debbie.hoy@ontario.ca">&nbspDebbie Hoy - email</a> &nbsp &nbsp &nbsp &nbsp<a href="tel:9056302696">cell: 905-630-2696</a></p>
+                    <p><a href="mailto:jenn.moulton@ontario.ca">&nbspJenn Moulton - email</a> &nbsp &nbsp &nbsp &nbsp<a href="tel:9059035765">cell: 905-903-5765</a></p>
+                    <p><a href="mailto:sean.roelofsen@ontario.ca">&nbspSean Roelofsen - email</a> &nbsp &nbsp &nbsp &nbsp<a href="tel:2899835744">cell: 289-983-5744</a></p>
+                    <p><a href="mailto:donna.staniscia@ontario.ca">&nbspDonna Staniscia - email</a> &nbsp &nbsp &nbsp &nbsp<a href="tel:7052201773">cell: 705-220-1773</a></p>
+                    <p><a href="mailto:carly.munce@ontario.ca">&nbspCarly Munce - email</a> &nbsp &nbsp &nbsp &nbsp<a href="tel:7057213758">cell: 705-721-3758</a></p>
+                    <br>
+                    <p>&nbsp&nbsp---------------OTHER CONTACTS--------------------------</p>
+                    <p><a href="tel:9054275617">&nbspYD-HP-TO Watery Duty Line: 905-427-5617</a></p>
+                    <p><a href="tel:9053198292">&nbspHalton-Peel Duty Officer: 905-319-8292</a></p>
+                    <p><a href="tel:9054275633">&nbspYork-Durham Duty Officer: 905-427-5633</a></p>
+                    <p><a href="tel:4163263381">&nbspToronto Duty Officer: 416-326-3381</a></p>
+                    <p><a href="tel:18002686063">&nbspSAC ERP Line: 800-268-6063</a></p>
+
+          
+
+                    </div>
+
+    </body>
+
+</html>
